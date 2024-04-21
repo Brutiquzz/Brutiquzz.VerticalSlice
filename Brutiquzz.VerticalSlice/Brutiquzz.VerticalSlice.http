@@ -1,0 +1,6 @@
+@Brutiquzz.VerticalSlice_HostAddress = http://localhost:5212
+
+GET {{Brutiquzz.VerticalSlice_HostAddress}}/product/productID
+Accept: application/json
+
+###
