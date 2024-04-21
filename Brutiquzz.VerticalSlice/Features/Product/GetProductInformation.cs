@@ -19,13 +19,12 @@ public record GetProductInformation([FromRoute] Guid ProductId) : IRequest<Actio
         => await mediator.Send(request, cancellationToken);
     }
 
-    internal class GetProductInformationHandler(DatabaseContext databaseContext)
+    internal class GetProductInformationHandler(DatabaseContext databaseContext, GetProductInformationValidator validator)
         : IRequestHandler<GetProductInformation, ActionResult<ProductInformation>>
     {
-        private readonly GetProductInformationValidator _validator = new();
         public async Task<ActionResult<ProductInformation>> Handle(GetProductInformation request, CancellationToken cancellationToken)
         {
-            _validator.Validate(request);
+            validator.Validate(request);
 
             var product = await databaseContext.Products
                 .SingleOrDefaultAsync(x => x.ProductId == request.ProductId, cancellationToken);
