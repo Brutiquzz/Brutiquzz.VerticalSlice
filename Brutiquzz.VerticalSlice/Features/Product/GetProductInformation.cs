@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Brutiquzz.VerticalSlice.Features.Product;
 
-public record GetProductInformation([FromRoute] Guid ProductId) : IRequest<ProductInformation>
+public record GetProductInformation([FromRoute] Guid ProductId) : IRequest<ActionResult<ProductInformation>>
 {
     internal class GetProductInformationRequest(IMediator mediator) : EndpointBaseAsync
         .WithRequest<GetProductInformation>
@@ -20,17 +20,17 @@ public record GetProductInformation([FromRoute] Guid ProductId) : IRequest<Produ
     }
 
     internal class GetProductInformationHandler(DatabaseContext databaseContext)
-        : IRequestHandler<GetProductInformation, ProductInformation>
+        : IRequestHandler<GetProductInformation, ActionResult<ProductInformation>>
     {
         private readonly GetProductInformationValidator _validator = new();
-        public async Task<ProductInformation> Handle(GetProductInformation request, CancellationToken cancellationToken)
+        public async Task<ActionResult<ProductInformation>> Handle(GetProductInformation request, CancellationToken cancellationToken)
         {
             _validator.Validate(request);
 
             var product = await databaseContext.Products
                 .SingleOrDefaultAsync(x => x.ProductId == request.ProductId, cancellationToken);
 
-            if (product == null) new NotFoundResult();
+            if (product == null) return new NotFoundResult();
 
             return new ProductInformation(product);
         }
