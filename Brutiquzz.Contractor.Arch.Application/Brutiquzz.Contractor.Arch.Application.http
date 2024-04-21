@@ -1,6 +1,0 @@
-@Brutiquzz.Contractor.Arch.Application_HostAddress = http://localhost:5129
-
-GET {{Brutiquzz.Contractor.Arch.Application_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
