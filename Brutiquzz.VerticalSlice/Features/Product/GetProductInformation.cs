@@ -1,11 +1,8 @@
-﻿using Ardalis.ApiEndpoints;
-using Brutiquzz.VerticalSlice.DataAccess.Contexts;
-using Brutiquzz.VerticalSlice.Domain;
+﻿using Brutiquzz.VerticalSlice.Domain;
 using Cortex.Mediator;
 using Cortex.Mediator.Queries;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
 namespace Brutiquzz.VerticalSlice.Features.Product;
@@ -17,7 +14,7 @@ public record GetProductInformation(Guid ProductId) : IQuery<ActionResult<Produc
     {
         public void MapEndpoint(IEndpointRouteBuilder builder)
         {
-            builder.MapGet("/product/{id:guid}", async (Guid id, IMediator mediator, CancellationToken cancellationToken) =>
+            builder.MapGet("/product/{id}", async (Guid id, IMediator mediator, CancellationToken cancellationToken) =>
             {
                 return (await mediator.SendQueryAsync(new GetProductInformation(id), cancellationToken));
             })
@@ -36,16 +33,7 @@ public record GetProductInformation(Guid ProductId) : IQuery<ActionResult<Produc
         }
     }
 
-    //internal class GetProductInformationRequest(IMediator mediator) : EndpointBaseAsync
-    //    .WithRequest<GetProductInformation>
-    //    .WithActionResult<ProductInformation>
-    //{
-    //    [HttpGet("product/{productId}")]
-    //    public override async Task<ActionResult<ProductInformation>> HandleAsync(GetProductInformation request, CancellationToken cancellationToken = default)
-    //    => await mediator.SendQueryAsync(request, cancellationToken);
-    //}
-
-    internal class GetProductInformationHandler(GetProductInformationValidator validator)
+    public sealed class GetProductInformationHandler(GetProductInformationValidator validator)
         : IQueryHandler<GetProductInformation, ActionResult<ProductInformation>>
     {
         public async Task<ActionResult<ProductInformation>> Handle(GetProductInformation request, CancellationToken cancellationToken)
@@ -58,7 +46,7 @@ public record GetProductInformation(Guid ProductId) : IQuery<ActionResult<Produc
         }
     }
 
-    internal class GetProductInformationValidator : AbstractValidator<GetProductInformation>
+    public sealed class GetProductInformationValidator : AbstractValidator<GetProductInformation>
     {
         public GetProductInformationValidator()
         {

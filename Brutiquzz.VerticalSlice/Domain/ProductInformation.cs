@@ -1,6 +1,4 @@
-﻿using Brutiquzz.VerticalSlice.DataAccess.Entities;
-
-namespace Brutiquzz.VerticalSlice.Domain;
+﻿namespace Brutiquzz.VerticalSlice.Domain;
 
 public class ProductInformation
 {
