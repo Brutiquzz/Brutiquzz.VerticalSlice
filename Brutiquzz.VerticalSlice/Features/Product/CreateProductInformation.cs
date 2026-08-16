@@ -1,13 +1,12 @@
-﻿using Brutiquzz.VerticalSlice.Domain;
-using Cortex.Mediator;
+﻿using Cortex.Mediator;
 using Cortex.Mediator.Commands;
 using FluentValidation;
-using Microsoft.AspNetCore.Mvc;
 using Scalar.AspNetCore;
+using static Brutiquzz.VerticalSlice.Features.Product.CreateProductInformation;
 
 namespace Brutiquzz.VerticalSlice.Features.Product;
 
-public record CreateProductInformation(Guid ProductId) : ICommand<ActionResult<ProductInformation>>
+public record CreateProductInformation(Guid ProductId) : ICommand<CreateProductInformationResponse>
 {
 
     private sealed class CreateProductInformationEndpoint : IEndpoint
@@ -21,8 +20,8 @@ public record CreateProductInformation(Guid ProductId) : ICommand<ActionResult<P
                 .WithName("CreateProductInformation")
                 .WithSummary("Creating a Product Information")
                 .WithDescription("This is a description on how a product information gets created")
-                .Produces<ProductInformation>(StatusCodes.Status200OK)
-                .Produces(StatusCodes.Status404NotFound)
+                .Produces<CreateProductInformationResponse>(StatusCodes.Status200OK)
+                .Produces(StatusCodes.Status400BadRequest)
                 // Authorization: endpoints default to anonymous access for maximum flexibility.
                 // To require JWT authentication, replace .AllowAnonymous() with:
                 //     .RequireAuthorization(AuthorizationPolicies.AuthenticatedUser)
@@ -34,15 +33,18 @@ public record CreateProductInformation(Guid ProductId) : ICommand<ActionResult<P
     }
 
     public sealed class CreateProductInformationHandler(CreateProductInformationValidator validator)
-        : ICommandHandler<CreateProductInformation, ActionResult<ProductInformation>>
+        : ICommandHandler<CreateProductInformation, CreateProductInformationResponse>
     {
-        public async Task<ActionResult<ProductInformation>> Handle(CreateProductInformation request, CancellationToken cancellationToken)
+        public async Task<CreateProductInformationResponse> Handle(CreateProductInformation request, CancellationToken cancellationToken)
         {
             validator.Validate(request);
 
-            var product = new ProductInformation() { Id = request.ProductId, Name = "Sample Product", Description = "This is a sample product." };
-
-            return product;
+            return new CreateProductInformationResponse
+            {
+                ProductId = request.ProductId,
+                Name = "Sample Product",
+                Description = "This is a sample product."
+            };
         }
     }
 
@@ -53,5 +55,12 @@ public record CreateProductInformation(Guid ProductId) : ICommand<ActionResult<P
             RuleFor(x => x.ProductId).NotEmpty();
             RuleFor(x => x.ProductId).NotEqual(Guid.Empty);
         }
+    }
+
+    public sealed class CreateProductInformationResponse
+    {
+        public Guid ProductId { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
     }
 }

@@ -1,13 +1,12 @@
-﻿using Brutiquzz.VerticalSlice.Domain;
-using Cortex.Mediator;
+﻿using Cortex.Mediator;
 using Cortex.Mediator.Queries;
 using FluentValidation;
-using Microsoft.AspNetCore.Mvc;
 using Scalar.AspNetCore;
+using static Brutiquzz.VerticalSlice.Features.Product.GetProductInformation;
 
 namespace Brutiquzz.VerticalSlice.Features.Product;
 
-public record GetProductInformation(Guid ProductId) : IQuery<ActionResult<ProductInformation>>
+public record GetProductInformation(Guid ProductId) : IQuery<GetProductInformationResponse>
 {
 
     private sealed class GetProductInformationEndpoint : IEndpoint
@@ -21,7 +20,7 @@ public record GetProductInformation(Guid ProductId) : IQuery<ActionResult<Produc
                 .WithName("GetProductInformation")
                 .WithSummary("Getting a Product Information")
                 .WithDescription("This is a description on how a product information gets retrieved")
-                .Produces<ProductInformation>(StatusCodes.Status200OK)
+                .Produces<GetProductInformationResponse>(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status404NotFound)
                 // Authorization: endpoints default to anonymous access for maximum flexibility.
                 // To require JWT authentication, replace .AllowAnonymous() with:
@@ -34,15 +33,18 @@ public record GetProductInformation(Guid ProductId) : IQuery<ActionResult<Produc
     }
 
     public sealed class GetProductInformationHandler(GetProductInformationValidator validator)
-        : IQueryHandler<GetProductInformation, ActionResult<ProductInformation>>
+        : IQueryHandler<GetProductInformation, GetProductInformationResponse>
     {
-        public async Task<ActionResult<ProductInformation>> Handle(GetProductInformation request, CancellationToken cancellationToken)
+        public async Task<GetProductInformationResponse> Handle(GetProductInformation request, CancellationToken cancellationToken)
         {
             validator.Validate(request);
 
-            var product = new ProductInformation() { Id = request.ProductId, Name = "Sample Product", Description = "This is a sample product." };
-
-            return product;
+            return new GetProductInformationResponse
+            {
+                ProductId = request.ProductId,
+                Name = "Sample Product",
+                Description = "This is a sample product."
+            };
         }
     }
 
@@ -53,5 +55,12 @@ public record GetProductInformation(Guid ProductId) : IQuery<ActionResult<Produc
             RuleFor(x => x.ProductId).NotEmpty();
             RuleFor(x => x.ProductId).NotEqual(Guid.Empty);
         }
+    }
+
+    public sealed class GetProductInformationResponse
+    {
+        public Guid ProductId { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
     }
 }

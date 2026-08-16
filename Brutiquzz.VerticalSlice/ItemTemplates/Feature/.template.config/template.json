@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json.schemastore.org/template",
+  "author": "Brutiquzz",
+  "classifications": [
+    "Code",
+    "Vertical Slice"
+  ],
+  "identity": "Brutiquzz.Templates.VerticalSliceFeature",
+  "name": "Brutiquzz Vertical Slice Feature",
+  "shortName": "brutiquzz-verticalslice-feature",
+  "sourceName": "FeatureTemplate",
+  "defaultName": "Feature",
+  "tags": {
+    "language": "C#",
+    "type": "item"
+  },
+  "symbols": {
+    "operation": {
+      "type": "parameter",
+      "datatype": "choice",
+      "isRequired": true,
+      "description": "The HTTP operation for the feature",
+      "choices": [
+        {
+          "choice": "GET",
+          "description": "GET operation (IQuery)"
+        },
+        {
+          "choice": "POST",
+          "description": "POST operation (ICommand)"
+        },
+        {
+          "choice": "PUT",
+          "description": "PUT operation (ICommand)"
+        },
+        {
+          "choice": "PATCH",
+          "description": "PATCH operation (ICommand)"
+        },
+        {
+          "choice": "DELETE",
+          "description": "DELETE operation (ICommand)"
+        }
+      ]
+    },
+    "route": {
+      "type": "parameter",
+      "datatype": "string",
+      "defaultValue": "/product",
+      "description": "The route for the endpoint"
+    },
+    "Tag": {
+      "type": "parameter",
+      "datatype": "string",
+      "defaultValue": "Product",
+      "replaces": "TEMPLATE_TAG",
+      "description": "The tag for OpenAPI grouping"
+    },
+    "namespace": {
+      "type": "parameter",
+      "datatype": "string",
+      "replaces": "TEMPLATE_NAMESPACE",
+      "defaultValue": "Brutiquzz.VerticalSlice.Features.Product",
+      "description": "The namespace for the feature"
+    },
+    "isQuery": {
+      "type": "computed",
+      "value": "(operation == \"GET\")"
+    },
+    "isCommand": {
+      "type": "computed",
+      "value": "(operation != \"GET\")"
+    },
+    "isRouteIdBound": {
+      "type": "computed",
+      "value": "(operation == \"GET\" || operation == \"DELETE\")"
+    },
+    "isBodyBound": {
+      "type": "computed",
+      "value": "(operation == \"POST\" || operation == \"PUT\" || operation == \"PATCH\")"
+    },
+    "isPostOperation": {
+      "type": "computed",
+      "value": "(operation == \"POST\")"
+    }
+  }
+}

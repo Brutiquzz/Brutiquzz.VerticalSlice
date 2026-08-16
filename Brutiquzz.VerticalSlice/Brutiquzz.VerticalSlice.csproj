@@ -8,6 +8,12 @@
 
   <ItemGroup>
     <Content Include=".template.config\template.json" />
+    <Content Include="ItemTemplates\Feature\.template.config\template.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="ItemTemplates\**\*.cs" />
+    <Content Include="ItemTemplates\**\*.cs" />
   </ItemGroup>
 
   <ItemGroup>
